@@ -14,7 +14,7 @@ void print_board(int s[]){
 }
 
 int get_direct(int step){ // 1 if right, -1 if left
-  return step / abs(step);
+  return step > 0?1:-1;
 }
 
 int step_transform(int postion, int direct){
@@ -98,18 +98,20 @@ int is_quan(int postion){
 int move_iter(int board[], int step, int print){ 
   // print = 1 if print board, print = 0 if not
   int direct = get_direct(step);
-  int postion = abs(step);
+  int postion = step>0?step:-step;
+  if(print)
+    printf("postion:%d direct:%d:\n", postion, direct);
   int score = 0;
   int next_postion = 0, next_next_postion = 0;
-  int num_units = board[step];
+  int num_units = board[postion];
   int matluot = 0;
   board[postion] = 0;
   while(! matluot){
     if(num_units > 0){
       postion += direct;
-      postion %= 12;
+      postion = (postion + 12) % 12;
       num_units--;
-      board[postion]++;
+      board[postion] += 1;
     }
     if(num_units == 0){
       next_postion = (postion + direct) % 12;
@@ -137,7 +139,7 @@ int move_iter(int board[], int step, int print){
         postion = next_postion;        
         if(print){
           print_board(board);
-          printf("***BOC TIEP %d:%d-%d\n", num_units, postion,direct);     \
+          printf("***BOC TIEP %d:postion%d-direct%d\n", num_units, postion,direct);     \
           printf("-----------------------------------\n");
         }
       }
@@ -146,7 +148,7 @@ int move_iter(int board[], int step, int print){
   }
   if(print){
     print_board(board);
-    printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   }
   return score;
 } 
