@@ -1,5 +1,10 @@
 #include "game.h"
 
+const int user_move[] = {1,2,3,4,5};
+const int ai_move[] = {7,8,9,10,11};
+const int quan[] = {0,6};
+
+
 void print_board(int s[]){
   printf("+---------------------------+\n");
   printf("|   |%3d|%3d|%3d|%3d|%3d|   |\n",s[1],s[2],s[3],s[4],s[5]);
@@ -17,13 +22,14 @@ int step_transform(int postion, int direct){
 }
 
 int check_step_true(int board[], int step, int side){
+  // if user side = 1, if ai size = 0
   int list_step[20];
   int len_list_step = get_list_step_true(board, side, list_step);
   int i;
   //int check = 0
   for(i=0; i < len_list_step; i++){
     if(step == list_step[i])
-                 return 1;
+      return 1;
   }
   return 0;
 }
@@ -112,14 +118,14 @@ int move_iter(int board[], int step, int print){
           (board[next_postion] == 0 && board[next_next_postion] == 0)){
         matluot = 1;
         if(print)
-          printf("***MAT LUOT (Gap O QUAN hoac 2 O TRONG)");
+          printf("***MAT LUOT (Gap O QUAN hoac 2 O TRONG)\n");
         break;
       }
       
       if (board[next_postion] == 0 && board[next_next_postion] > 0){
         score += board[next_next_postion];
         if(print)
-          printf("an %d:%d, mat luot", next_postion, board[next_next_postion]);
+          printf("an %d:%d, mat luot\n", next_postion, board[next_next_postion]);
         board[next_next_postion] = 0;
         matluot = 1;
         break;
@@ -131,7 +137,7 @@ int move_iter(int board[], int step, int print){
         postion = next_postion;        
         if(print){
           print_board(board);
-          printf("***BOC TIEP %d:%d-%d", num_units, postion,direct);     \
+          printf("***BOC TIEP %d:%d-%d\n", num_units, postion,direct);     \
           printf("-----------------------------------\n");
         }
       }
