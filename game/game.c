@@ -16,7 +16,9 @@ int step_transform(int postion, int direct){
   return postion * direct;
 }
 
-int check_step_true(int step, int list_step[], int len_list_step){
+int check_step_true(int board[], int step, int side){
+  int list_step[20];
+  int len_list_step = get_list_step_true(board, side, list_step);
   int i;
   //int check = 0
   for(i=0; i < len_list_step; i++){
