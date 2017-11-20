@@ -56,6 +56,8 @@ void stand_alone_game(void){
     }
     user_turn *= -1;
   }
+  user_score = get_final_score(game_board, 1, user_score);
+  ai_score = get_final_score(game_board, 0, ai_score);
   printf("final result: %d-%d\n", user_score, ai_score);
 }
 
