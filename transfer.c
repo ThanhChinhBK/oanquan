@@ -141,7 +141,7 @@ void toClient(int sock, char *buffer, char* sending)
     strcat(ahihi, buffer);
 
     if (strcmp(sending, "end") == 0) {
-        printf("\tTo client: .../n%s\n", buffer);
+        printf("\tTo client: Gaming...\n");
         state = write(sock, ahihi, strlen(ahihi));
         bzero(ahihi, BUFFER_LENGTH);
         if (state < 0)
