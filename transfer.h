@@ -22,5 +22,5 @@ void toServer(int sock);
 
 // Use in Server
 void fromClient(int sock, char *str);
-void toClient(int sock, char* buffer);
+void toClient(int sock, char* buffer, char* sending);
 int waitIntFromClient(int sock);

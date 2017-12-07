@@ -1,7 +1,7 @@
 #include "transfer.h"
 
 // Common
-
+char ahihi[BUFFER_LENGTH];
 ////
 // Use in Client
 
@@ -9,7 +9,39 @@ void fromServer(int sock)
 {
     char buffer[BUFFER_LENGTH];
     bzero(buffer, BUFFER_LENGTH);
+    char bufferTemp[BUFFER_LENGTH];
+    bzero(bufferTemp, BUFFER_LENGTH);
+    char sending[11];
 
+    memset(sending, '\0', sizeof(sending));
+
+    // int state = recv(sock, buffer, BUFFER_LENGTH - 1, 0);
+    // int state;
+    // while(1) {
+    //     bzero(buffer, BUFFER_LENGTH);  //clear the variable
+    //     if((state =  recv(sock , buffer , BUFFER_LENGTH-1 , 0) ) < 0 )
+    //     {
+    //         strncpy(sending, buffer, 10);
+    //         if (strcmp(sending, "sending---") == 0)
+    //         {
+    //             printf("S%dS%s\n", state, sending);
+    //             strcat(ahihi, buffer);
+    //         } else {
+    //             printf("%s", ahihi);
+    //             break;
+    //         }
+    //     }
+    // }
+
+    // while(state >=0 && strcmp(sending, "sending---")) {
+    //     printf("S%dS%s\n", state, sending);
+    //     strncpy(sending, buffer, 10);
+    //     strcat(ahihi, buffer);
+    //     state = recv(sock, buffer, BUFFER_LENGTH - 1, 0);
+    // }
+    // printf("%s\n", "sdfdsf");
+    // printf("%s", ahihi);
+    // bzero(ahihi, BUFFER_LENGTH);
     int state = recv(sock, buffer, BUFFER_LENGTH - 1, 0);
 
     if (state < 0)
@@ -17,11 +49,24 @@ void fromServer(int sock)
         perror("ERROR RECEIVE RESPONSE");
         exit(1);
     }
-    // do {
-        printf("%s", buffer);
-        
-    // }while(recv(sock, buffer, BUFFER_LENGTH - 1, 0) > 0) ;
+    
+    // strncpy(sending, buffer, 10);
+    printf("%s", buffer);
+    // if (strcmp(sending, "sending---") == 0)
+    // {
+    //     printf("Enter\n");
+    //     strcat(ahihi, buffer);
+    //     fgets(bufferTemp, BUFFER_LENGTH - 1, stdin);
+    //     // fromServer(sock);
+    // } else {
+    //     printf("%s", ahihi);
+    //     bzero(ahihi, BUFFER_LENGTH);
     // }
+
+    // do {
+    //     printf("%s", buffer);
+    // } while(recv(sock, buffer, BUFFER_LENGTH - 1, 0) > 0) ;
+
 
     toServer(sock);
 }
@@ -87,18 +132,23 @@ void fromClient(int sock, char *str)
     }
 }
 
-void toClient(int sock, char *buffer)
+void toClient(int sock, char *buffer, char* sending)
 {
     int state;
+    char sendText[BUFFER_LENGTH];
+    bzero(sendText, BUFFER_LENGTH);
 
-    printf("\tTo client: %s\n", buffer);
+    strcat(ahihi, buffer);
 
-    state = write(sock, buffer, strlen(buffer));
-
-    if (state < 0)
-    {
-        perror("ERROR WRITING TO SOCKET");
-        exit(1);
+    if (strcmp(sending, "end") == 0) {
+        printf("\tTo client: .../n%s\n", buffer);
+        state = write(sock, ahihi, strlen(ahihi));
+        bzero(ahihi, BUFFER_LENGTH);
+        if (state < 0)
+        {
+            perror("ERROR WRITING TO SOCKET");
+            exit(1);
+        }
     }
     return;
 }

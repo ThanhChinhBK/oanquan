@@ -76,7 +76,6 @@ int main(int argc, char const *argv[]) {
             close(sockfd);
             
             while(1) {
-                toClient(newSockfd, "!-------------Start game-------------!\n");
                 if ( playGame(newSockfd) < 0) {
                     close(newSockfd);
                     exit(0);

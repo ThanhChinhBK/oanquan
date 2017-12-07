@@ -21,7 +21,7 @@ void print_board(int sock, int s[])
         s[0], s[6],
         s[11], s[10], s[9], s[8], s[7]);
 
-    toClient(sock, str);
+    toClient(sock, str, "sending");
 }
 
 int get_direct(int sock, int step)
@@ -117,7 +117,7 @@ int move_iter(int sock, int board[], int step, int print) {
     int postion = step > 0 ? step : -step;
     if (print) {
         asprintf(&str, "postion:%d direct:%d:\n", postion, direct);
-        toClient(sock, str);
+        toClient(sock, str, "sending");
     }
     int score = 0;
     int next_postion = 0, next_next_postion = 0;
@@ -139,7 +139,7 @@ int move_iter(int sock, int board[], int step, int print) {
                 matluot = 1;
             if (print)
                 asprintf(&str, "***MAT LUOT (Gap O QUAN hoac 2 O TRONG)\n");
-            toClient(sock, str);
+            toClient(sock, str, "sending");
             break;
         }
 
@@ -147,7 +147,7 @@ int move_iter(int sock, int board[], int step, int print) {
             score += board[next_next_postion];
             if (print)
                 asprintf(&str, "an %d:%d, mat luot\n", next_postion, board[next_next_postion]);
-            toClient(sock, str);
+            toClient(sock, str, "sending");
             board[next_next_postion] = 0;
             matluot = 1;
             break;
@@ -160,9 +160,9 @@ int move_iter(int sock, int board[], int step, int print) {
             if (print) {
                 print_board(sock, board);
                 asprintf(&str, "***BOC TIEP %d: postion=%d,direct=%d\n", num_units, postion, direct);
-                toClient(sock, str);
+                toClient(sock, str, "sending");
                 asprintf(&str, "-----------------------------------\n");
-                toClient(sock, str);
+                toClient(sock, str, "sending");
             }
         }
     }
@@ -170,7 +170,7 @@ int move_iter(int sock, int board[], int step, int print) {
 if (print) {
     print_board(sock, board);
     asprintf(&str, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-    toClient(sock, str);
+    toClient(sock, str, "sending");
 }
 return score;
 }
@@ -181,15 +181,15 @@ int get_user_step(int sock){
     int step, postion, direct;
     while(1){
         while(1){
-            __fpurge(stdin);
-            toClient(sock, "Nhap vao vi tri muon di chuyen(1-5):");
+            // __fpurge(stdin);
+            toClient(sock, "Nhap vao vi tri muon di chuyen(1-5):", "end");
             postion = waitIntFromClient(sock);
             if(postion >=1 && postion <= 5)
                 break;
         }
         while(1){
-            __fpurge(stdin);
-            toClient(sock, "Nhap vao huong muon di chuyen(-1:trai,1:phai):");
+            // __fpurge(stdin);
+            toClient(sock, "Nhap vao huong muon di chuyen(-1:trai,1:phai):", "end");
             direct = waitIntFromClient(sock);
             if(direct ==1 || direct == -1)
                 break;
@@ -198,7 +198,7 @@ int get_user_step(int sock){
         if (check_step_true(sock, game_board, step, 1))
             break;
         else
-            toClient(sock, "step khong nam trong so step thoa man\n");
+            toClient(sock, "step khong nam trong so step thoa man\n", "end");
     }
     return step;
 }
@@ -211,7 +211,7 @@ int get_ai_random_step(int sock){
 }
 
 void stand_alone_game(int sock){
-    // toClient(sock, "!-------------Start game-------------!\n");
+    toClient(sock, "!-------------Start game-------------!\n", "sending");
     int user_turn = 1;
     int step, user_score = 0, ai_score=0;
     int tmp_score;
@@ -229,7 +229,7 @@ void stand_alone_game(int sock){
         }
         user_turn *= -1;
     }
-// toClient(sock, "final result: %d-%d\n", user_score, ai_score);
+// toClient(sock, "final result: %d-%d\n", user_score, ai_score, "sending");
 }
 
 void start(int sock){
