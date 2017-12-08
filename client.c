@@ -59,10 +59,7 @@ int main(int argc, char *argv[])
         if (!socketConnected)
             break;
         // Play game!
-        // while(1) {
-            fromServer(sockfd);
-        // }
-        toServer(sockfd);
+        fromServer(sockfd);
     }
 
     return 0;
