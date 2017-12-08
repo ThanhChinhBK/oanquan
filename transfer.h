@@ -24,3 +24,4 @@ void toServer(int sock);
 void fromClient(int sock, char *str);
 void toClient(int sock, char* buffer, char* sending);
 int waitIntFromClient(int sock);
+void waitEndFromClient(int sock);

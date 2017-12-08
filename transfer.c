@@ -15,33 +15,6 @@ void fromServer(int sock)
 
     memset(sending, '\0', sizeof(sending));
 
-    // int state = recv(sock, buffer, BUFFER_LENGTH - 1, 0);
-    // int state;
-    // while(1) {
-    //     bzero(buffer, BUFFER_LENGTH);  //clear the variable
-    //     if((state =  recv(sock , buffer , BUFFER_LENGTH-1 , 0) ) < 0 )
-    //     {
-    //         strncpy(sending, buffer, 10);
-    //         if (strcmp(sending, "sending---") == 0)
-    //         {
-    //             printf("S%dS%s\n", state, sending);
-    //             strcat(ahihi, buffer);
-    //         } else {
-    //             printf("%s", ahihi);
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // while(state >=0 && strcmp(sending, "sending---")) {
-    //     printf("S%dS%s\n", state, sending);
-    //     strncpy(sending, buffer, 10);
-    //     strcat(ahihi, buffer);
-    //     state = recv(sock, buffer, BUFFER_LENGTH - 1, 0);
-    // }
-    // printf("%s\n", "sdfdsf");
-    // printf("%s", ahihi);
-    // bzero(ahihi, BUFFER_LENGTH);
     int state = recv(sock, buffer, BUFFER_LENGTH - 1, 0);
 
     if (state < 0)
@@ -49,24 +22,8 @@ void fromServer(int sock)
         perror("ERROR RECEIVE RESPONSE");
         exit(1);
     }
-    
-    // strncpy(sending, buffer, 10);
+
     printf("%s", buffer);
-    // if (strcmp(sending, "sending---") == 0)
-    // {
-    //     printf("Enter\n");
-    //     strcat(ahihi, buffer);
-    //     fgets(bufferTemp, BUFFER_LENGTH - 1, stdin);
-    //     // fromServer(sock);
-    // } else {
-    //     printf("%s", ahihi);
-    //     bzero(ahihi, BUFFER_LENGTH);
-    // }
-
-    // do {
-    //     printf("%s", buffer);
-    // } while(recv(sock, buffer, BUFFER_LENGTH - 1, 0) > 0) ;
-
 
     toServer(sock);
 }
@@ -75,7 +32,7 @@ void toServer(int sock)
 {
     char buffer[BUFFER_LENGTH];
     bzero(buffer, BUFFER_LENGTH);
-    // printf("toServer: ");
+
     if (fgets(buffer, BUFFER_LENGTH - 1, stdin) == NULL)
     {
         perror("ERROR CREATE TO BUFFER");
@@ -127,7 +84,6 @@ void fromClient(int sock, char *str)
     {
         printf("\n\tFr client: %s\n", buffer);
         strcpy(str, buffer);
-        // printf("\n%s\n", str);
         return;
     }
 }
@@ -161,4 +117,6 @@ int waitIntFromClient(int sock)
     return atoi(buffer);
 }
 
-////
+void waitEndFromClient(int sock) {
+    // send file and close socket
+}
