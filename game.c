@@ -1,4 +1,5 @@
 #include "game.h"
+#include <time.h>
 
 const int user_move[] = {1,2,3,4,5};
 const int ai_move[] = {7,8,9,10,11};
@@ -8,6 +9,7 @@ int game_board[] = {10,5,5,5,5,5,10,5,5,5,5,5};
 char luat_choi[] = "Nguoi dung di cac o duoi,\nMay di cac o tren,\nmat luot khi an quan, gap o trong hoac gap o quan\n";
 int is_quan_avaiable[] = {1,1};
 char log_string[1000]="";
+char main_log[1000] = "";
 
 char buffer[BUFFER_LENGTH];
 char *sendText;
@@ -64,7 +66,7 @@ int get_list_step_true(int sock, int board[], int side, int *list_step){
         for(i=0; i<5;i++) {
             if(board[ai_move[i]] != 0){
                 list_step[count] = ai_move[i];
-                list_step[count+1] = -ai_move[i];
+                list_step[count+1] = -1 * ai_move[i];
                 count += 2;
             }
         }
@@ -192,22 +194,8 @@ char* get_step_string(int sock, int step){
     char *s = (char *)malloc (sizeof (char) * 10);
     int postion = step > 0? step:-step;
     int direct = step > 0? 1:-1;
-    s[0]='(';
-    s[1] = postion+'0';
-    s[2]=',';
-    if (direct > 0){
-        s[3] = '-';
-        s[4] = '1';
-        s[5] = ')';
-        s[6] = '\n';
-        s[7] = '\0';
-    }
-    else{
-        s[3] = '1';
-        s[4] = ')';
-        s[5] = '\n';
-        s[6] = '\0';
-    }
+    printf("%d\n", postion);
+    sprintf(s, "(%d, %d)\n", postion, direct);
     return s;
 
 }
@@ -246,11 +234,16 @@ int get_ai_random_step(int sock, int game_board[]){
 }
 
 void stand_alone_game(int sock){
+    time_t now = time(NULL);
     toClient(sock, "!-------------Start game-------------!\n", "sending");
     int user_turn = 1;
+    char start_time[25];
+    strftime(start_time, 25, "%Y-%m-%d-%H-%M-%S", localtime(&now));
+    char end_time[25];
     int step, user_score = 0, ai_score=0;
     int tmp_score;
     print_board(sock, game_board);
+    
     while(!check_board_status(sock, game_board, is_quan_avaiable)){
         if(user_turn > 0){
             step = get_user_step(sock, game_board);
@@ -266,12 +259,15 @@ void stand_alone_game(int sock){
         }
         user_turn *= -1;
     }
+    strftime(end_time, 25, "%Y-%m-%d-%H-%M-%S", localtime(&now));
+    sprintf(main_log, "start_time: %s, end time : %s\n",start_time, end_time) ;
     user_score = get_final_score(sock, game_board, 1, user_score);
     ai_score = get_final_score(sock, game_board, 0, ai_score);
     asprintf(&sendText, "final result: %d-%d\n", user_score, ai_score);
     toClient(sock, sendText, "sending");
     toClient(sock, "Get file log game? (yes/no) : ", "end");
     // End game and send log_string ?
+    strcat(log_string, main_log);
     waitEndFromClient(sock, log_string);
 }
 
