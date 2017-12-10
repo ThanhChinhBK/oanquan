@@ -229,10 +229,11 @@ int get_user_step(int sock, int game_board[]){
                 break;
         }
         step = postion * direct;    
-        if (check_step_true(sock, game_board, step, 1))
+        if (check_step_true(sock, game_board, step, 1)) {
             break;
-        else
-            toClient(sock, "step khong nam trong so step thoa man\n", "end");
+        } else {
+            toClient(sock, "step khong nam trong so step thoa man\n", "sending");
+        }
     }
     return step;
 }
@@ -269,9 +270,9 @@ void stand_alone_game(int sock){
     ai_score = get_final_score(sock, game_board, 0, ai_score);
     asprintf(&sendText, "final result: %d-%d\n", user_score, ai_score);
     toClient(sock, sendText, "sending");
-    toClient(sock, "Get file log game? (yes/no)", "sending");
+    toClient(sock, "Get file log game? (yes/no) : ", "end");
     // End game and send log_string ?
-    waitEndFromClient(sock);
+    waitEndFromClient(sock, log_string);
 }
 
 void start(int sock){

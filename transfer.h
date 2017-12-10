@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <math.h>
+#include <time.h>
 
 #define PORT 8888
 #define BUFFER_LENGTH 10001
@@ -24,4 +25,4 @@ void toServer(int sock);
 void fromClient(int sock, char *str);
 void toClient(int sock, char* buffer, char* sending);
 int waitIntFromClient(int sock);
-void waitEndFromClient(int sock);
+void waitEndFromClient(int sock, char * log_string);

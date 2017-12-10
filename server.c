@@ -55,14 +55,12 @@ int main(int argc, char const *argv[]) {
             exit(1);
         } else if (pid == 0) {
             close(sockfd);
-            
             while(1) {
                 if ( playGame(newSockfd) < 0) {
                     close(newSockfd);
                     exit(0);
                 };
             }
-
             close(newSockfd);
             exit(0);
         }
@@ -81,7 +79,6 @@ int main(int argc, char const *argv[]) {
     return 0;
 }
 /////////
-
 
 void convertToUpperCase(char *sPtr) {   
     while(*sPtr != '\0')  {

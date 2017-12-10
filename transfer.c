@@ -1,7 +1,7 @@
 #include "transfer.h"
 
 // Common
-char ahihi[BUFFER_LENGTH];
+char fullBuffer[BUFFER_LENGTH];
 ////
 // Use in Client
 
@@ -11,9 +11,6 @@ void fromServer(int sock)
     bzero(buffer, BUFFER_LENGTH);
     char bufferTemp[BUFFER_LENGTH];
     bzero(bufferTemp, BUFFER_LENGTH);
-    char sending[11];
-
-    memset(sending, '\0', sizeof(sending));
 
     int state = recv(sock, buffer, BUFFER_LENGTH - 1, 0);
 
@@ -23,9 +20,28 @@ void fromServer(int sock)
         exit(1);
     }
 
-    printf("%s", buffer);
+    if (buffer[0] == '(') {   // Write file log
+        char logFileName[25];
+        FILE *logFile;
 
-    toServer(sock);
+        time_t now = time(NULL);
+        strftime(logFileName, 25, "%Y-%m-%d-%Hh%Mm%Ss", localtime(&now));
+        logFile = fopen(logFileName, "w+");
+
+        fprintf(logFile, buffer);
+        fclose(logFile);
+        printf("Log file: %s\nEnd Game!\n", logFileName);
+        close(sock);
+    } else {
+        printf("%s", buffer);
+        if (strcmp(buffer, "Good Bye!") == 0) { // End game
+            close(sock);
+        }
+        else { // Gaming
+            toServer(sock);
+        }
+    }
+
 }
 
 void toServer(int sock)
@@ -78,6 +94,7 @@ void fromClient(int sock, char *str)
             perror("ERROR WRITING TO SOCKET");
             exit(1);
         }
+        close(sock);
         return;
     }
     else
@@ -94,12 +111,22 @@ void toClient(int sock, char *buffer, char* sending)
     char sendText[BUFFER_LENGTH];
     bzero(sendText, BUFFER_LENGTH);
 
-    strcat(ahihi, buffer);
+    strcat(fullBuffer, buffer);
 
-    if (strcmp(sending, "end") == 0) {
-        printf("\tTo client: Gaming...\n");
-        state = write(sock, ahihi, strlen(ahihi));
-        bzero(ahihi, BUFFER_LENGTH);
+    if (strcmp(sending, "endgame") == 0) {
+        printf("\tTo client: End Game!\n");
+        state = write(sock, fullBuffer, strlen(fullBuffer));
+        bzero(fullBuffer, BUFFER_LENGTH);
+        close(sock);
+        if (state < 0)
+        {
+            perror("ERROR WRITING TO SOCKET");
+            exit(1);
+        }
+    } else if (strcmp(sending, "end") == 0) {
+        printf("\tTo client: Gaming...%s\n", buffer);
+        state = write(sock, fullBuffer, strlen(fullBuffer));
+        bzero(fullBuffer, BUFFER_LENGTH);
         if (state < 0)
         {
             perror("ERROR WRITING TO SOCKET");
@@ -117,6 +144,15 @@ int waitIntFromClient(int sock)
     return atoi(buffer);
 }
 
-void waitEndFromClient(int sock) {
+void waitEndFromClient(int sock, char * log_string) {
     // send file and close socket
+    char buffer[BUFFER_LENGTH];
+    bzero(buffer, BUFFER_LENGTH);
+    fromClient(sock, buffer);
+    if (strcmp(buffer, "yes") == 0)
+    {
+        toClient(sock, log_string, "endgame");
+    } else {
+        toClient(sock, "Good Bye!", "endgame");
+    }
 }
