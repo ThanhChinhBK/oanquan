@@ -25,7 +25,7 @@ void fromServer(int sock)
         FILE *logFile;
 
         time_t now = time(NULL);
-        strftime(logFileName, 25, "%Y-%m-%d-%Hh%Mm%Ss", localtime(&now));
+        strftime(logFileName, 25, "%Y-%m-%d-%H-%M-%S", localtime(&now));
         logFile = fopen(logFileName, "w+");
 
         fprintf(logFile, buffer);
